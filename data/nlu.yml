@@ -1,26 +1,24 @@
-# data/nlu.yml
 version: "3.1"
 
 nlu:
 - intent: greet
   examples: |
-    - 你好
-    - 哈囉
-    - 早安
+    - Hello
+    - Hi
+    - Good morning
 
 - intent: goodbye
   examples: |
-    - 再見
-    - 掰掰
-    - 下次見
+    - Bye
+    - See you
+    - Quit
 
-- intent: ask_knowledge_base
+- intent: ask_mcdonalds_info
   examples: |
-    - 什麼是零樣本提示？
-    - 解釋一下少樣本提示
-    - 溫度設定是什麼意思？
-    - 什麼是 Persona？
-    - 提示工程中的分隔符號有什麼用？
-    - 跟我說說 Top-P
-    - 說明一下什麼是角色扮演
-    - 什麼是RAG?
+    - How much protein is in the Angus Original?
+    - Tell me about allergens
+    - Is your food safe?
+    - What is the energy content of a Big Mac?
+    - Do you have vegetarian options?
+    - Nutrition info for cheeseburger
+    - Contact customer service

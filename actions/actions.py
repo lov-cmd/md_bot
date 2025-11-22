@@ -1,28 +1,49 @@
-# actions/actions.py
 import os
 import requests
-import json
+import csv
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 
 # Configuration
 OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL_NAME = "qwen3:4b"  # Ensure this matches the model you pulled in Ollama
+MODEL_NAME = "qwen3:4b"  # Ensure you have pulled this model: `ollama pull qwen3:4b`
 
-# Load Knowledge Base
-try:
-    with open("knowledge_base.txt", "r", encoding="utf-8") as f:
-        KNOWLEDGE_BASE = f.read()
-    print("Knowledge base loaded successfully.")
-except FileNotFoundError:
-    print("Error: knowledge_base.txt not found.")
-    KNOWLEDGE_BASE = "No knowledge base available."
-
-class ActionQueryKnowledgeBase(Action):
+class ActionQueryMcDonalds(Action):
 
     def name(self) -> Text:
-        return "action_query_knowledge_base"
+        return "action_query_mcdonalds"
+
+    def get_knowledge_base_content(self) -> Text:
+        """
+        Reads both the TXT and CSV files and combines them into a single string context.
+        """
+        combined_context = ""
+
+        # 1. Read Text File (General Info)
+        try:
+            with open("knowledge_base.txt", "r", encoding="utf-8") as f:
+                text_data = f.read()
+                combined_context += f"--- GENERAL FOOD SAFETY & POLICIES ---\n{text_data}\n\n"
+        except FileNotFoundError:
+            print("Warning: knowledge_base.txt not found.")
+
+        # 2. Read CSV File (Nutrition Data)
+        try:
+            with open("knowledge_nutrition.csv", "r", encoding="utf-8") as csvfile:
+                reader = csv.DictReader(csvfile)
+                csv_text = "--- NUTRITION DATA ---\n"
+                for row in reader:
+                    # Convert CSV row to a readable sentence for the LLM
+                    item_name = row.get("Item", "Unknown Item")
+                    details = ", ".join([f"{k}: {v}" for k, v in row.items() if k != "Item"])
+                    csv_text += f"Item: {item_name} | Nutritional Values: [{details}]\n"
+                
+                combined_context += csv_text
+        except FileNotFoundError:
+            print("Warning: knowledge_nutrition.csv not found.")
+
+        return combined_context
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
@@ -30,52 +51,52 @@ class ActionQueryKnowledgeBase(Action):
 
         # 1. Get User Query
         user_query = tracker.latest_message.get('text')
-        print(f"Received user query: {user_query}")
+        print(f"User Query: {user_query}")
 
-        # 2. Construct the System Prompt (RAG)
-        # We instruct the model to act as a tutor and use the provided context.
+        # 2. Load Data
+        context_data = self.get_knowledge_base_content()
+
+        # 3. Construct System Prompt
         system_instruction = f"""
-        You are an expert AI assistant specializing in Prompt Engineering.
-        Use the following Context to answer the user's question.
-        If the answer is not in the context, say "Sorry, I don't have information on that topic."
-        Answer in Traditional Chinese (繁體中文).
-
+        You are a helpful customer service assistant for McDonald's Hong Kong.
+        Use the provided Context to answer the user's question about food safety or nutrition.
+        
         Context:
-        ---
-        {KNOWLEDGE_BASE}
-        ---
+        {context_data}
+        
+        Instructions:
+        - If asked about nutrition (calories, protein, etc.), look at the 'NUTRITION DATA' section.
+        - If asked about safety, allergens, or policies, look at the 'GENERAL FOOD SAFETY' section.
+        - If the answer is not in the context, politely say you don't have that specific information.
+        - Keep answers concise and friendly.
         """
 
-        # 3. Prepare the Payload for Ollama
+        # 4. Prepare Payload
         payload = {
             "model": MODEL_NAME,
             "messages": [
                 {"role": "system", "content": system_instruction},
                 {"role": "user", "content": user_query}
             ],
-            "stream": False, # We want the full response at once, not streaming
+            "stream": False,
             "options": {
-                "temperature": 0.3 # Low temperature for factual accuracy
+                "temperature": 0.2  # Low temperature for accurate data retrieval
             }
         }
 
-        # 4. Call Ollama API
-        print("Sending request to Ollama...")
+        # 5. Call Ollama
         try:
+            print(f"Sending request to Ollama ({MODEL_NAME})...")
             response = requests.post(OLLAMA_URL, json=payload)
-            response.raise_for_status() # Check for HTTP errors
+            response.raise_for_status()
             
-            # Parse JSON response
             result = response.json()
             generated_text = result.get("message", {}).get("content", "")
             
-            print(f"Ollama Response: {generated_text}")
-            
-            # 5. Send response to user
             dispatcher.utter_message(text=generated_text)
 
         except requests.exceptions.RequestException as e:
             print(f"Error connecting to Ollama: {e}")
-            dispatcher.utter_message(text="抱歉，我目前無法連接到大語言模型 (Ollama)。請檢查 Ollama 是否正在運行。")
+            dispatcher.utter_message(text="Sorry, I am having trouble accessing the nutrition database right now.")
 
         return []

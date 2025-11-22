@@ -1,14 +1,19 @@
-Topic: Prompt Engineering
-Description: Prompt engineering is the art and science of designing and optimizing inputs (prompts) to obtain the most accurate, relevant, and useful outputs from large language models.
+Topic: Nutrition Principles / 營養原則
+English: At McDonald’s, we believe in the nutritional principles of balance, variety, and moderation. We believe that eating at McDonald’s can fit into a healthy lifestyle. Our goal is to provide information necessary to make informed decisions.
+Chinese (HK): 在麥當勞，我們相信均衡、多樣化及適量的飲食原則。我們相信在麥當勞用餐可以配合健康的生活方式。我們的目標是提供必要的資訊，讓顧客做出明智的決定。
 
-Topic: Zero-Shot Prompting
-Description: This is the simplest prompting technique, providing only instructions without any examples. It relies entirely on the model's pre-trained knowledge.
+Topic: Data Accuracy & Disclaimer / 資料準確性與免責聲明
+English: Nutrition information is based on standard product formulations and serving sizes. Actual sizes and assembly may vary due to individual preparation, different suppliers, country of origin, and seasons. Product formulations may change periodically.
+Chinese (HK): 營養資料是根據標準產品配方及標準份量計算。由於每份食物均為個別製作，加上供應商、產地及季節的差異，實際份量及配方可能會有所不同。產品配方亦可能不時作出更改。
 
-Topic: Few-Shot Prompting
-Description: Provides multiple (2 or more) examples to the model, demonstrating a pattern for the model to follow. Suitable for complex tasks requiring specific formats.
+Topic: Allergen Warning / 致敏原警告
+English: As we operate working kitchens, there is always a risk that traces of allergens may be transferred to ingredients during storage or preparation. McDonald’s Restaurants cannot guarantee that any food item is free from traces of allergens.
+Chinese (HK): 由於我們的廚房是一個運作中的環境，食物在儲存或製作過程中，始終存在致敏原交叉感染的風險。麥當勞餐廳無法保證任何食品完全不含致敏原。
 
-Topic: Persona (Role-Playing)
-Description: Assigns a role to the LLM in the prompt (e.g., "As a... expert"). This helps control the tone, style, and complexity of the response.
+Topic: Animal Ingredients & Cross Contact / 動物成分與交叉接觸
+English: Whilst some ingredients may not contain animal ingredients, we cannot guarantee that there will be no cross-contact with ingredients that do contain animal ingredients in our kitchens.
+Chinese (HK): 雖然部分食材可能不含動物成分，但我們無法保證在廚房製作過程中，不會與含有動物成分的食材發生交叉接觸。
 
-Topic: Temperature
-Description: A parameter that controls the randomness of the model's output. Low temperature (0.2) produces deterministic answers. High temperature (0.9) produces creative results.
+Topic: Contact Us / 聯絡我們
+English: If you would like further information or have concerns regarding specific ingredients in specific menu items, please contact our Customer Relations Team via the McDonald's website.
+Chinese (HK): 如閣下需要更多資料或對個別食品的特定成分有任何疑問，請透過麥當勞網頁聯絡我們的顧客服務團隊。
