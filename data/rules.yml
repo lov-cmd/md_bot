@@ -1,13 +1,18 @@
+# data/rules.yml
 version: "3.1"
 
 rules:
+- rule: Respond to greetings
+  steps:
+  - intent: greet
+  - action: utter_greet
 
-- rule: Say goodbye anytime the user says goodbye
+- rule: Respond to goodbyes
   steps:
   - intent: goodbye
   - action: utter_goodbye
 
-- rule: Say 'I am a bot' anytime the user challenges
+- rule: Handle knowledge base questions
   steps:
-  - intent: bot_challenge
-  - action: utter_iamabot
+  - intent: ask_knowledge_base
+  - action: action_query_knowledge_base
